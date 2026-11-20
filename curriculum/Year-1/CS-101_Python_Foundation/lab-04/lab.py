@@ -34,28 +34,29 @@ def summarize(transactions: list[dict]) -> dict:
         }
     """
     total = 0
-    c = 0
+    count = 0
     by_category = {}
+    biggest = None
 
-    if len(transactions) == 0:
-        return {"total": total,             
-                "by_category": by_category, 
-                "count": c,              
-                "biggest": None
-        }
-
-    max_amount = transactions[0]["amount"]
-    biggest =  transactions[0]
     for t in transactions:
-        total += t["amount"]
-        c += 1
+        amount = t["amount"]
+        category = t["category"]
 
-        if t["amount"] > max_amount:
+        total += amount
+        count += 1
+
+        by_category[category] = (
+            by_category.get(category, 0) + amount
+        )
+
+        if biggest is None or amount > biggest["amount"]:
             biggest = t
-            max_amount = t["amount"]
-        
-        by_category[t["category"]] = by_category.get(t["category"],0) + t["amount"]
-    
-    return {"total":total,"by_category": by_category, "count":c,"biggest":biggest}
+
+    return {
+        "total": total,
+        "by_category": by_category,
+        "count": count,
+        "biggest": biggest
+    }
 
 print(summarize(transactions))
